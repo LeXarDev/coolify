@@ -17,11 +17,14 @@ use App\Models\StandaloneMysql;
 use App\Models\StandalonePostgresql;
 use App\Models\StandaloneRedis;
 use App\Models\StandaloneValkey;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Process;
 use Livewire\Component;
 
 class GetLogs extends Component
 {
+    use AuthorizesRequests;
+
     public string $outputs = '';
 
     public string $errors = '';
@@ -47,6 +50,8 @@ class GetLogs extends Component
     public function mount()
     {
         if (! is_null($this->resource)) {
+            $this->authorize('view', $this->resource);
+
             if ($this->resource->getMorphClass() === \App\Models\Application::class) {
                 $this->showTimeStamps = $this->resource->settings->is_include_timestamps;
             } else {
